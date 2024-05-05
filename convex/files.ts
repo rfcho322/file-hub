@@ -3,6 +3,7 @@ import { MutationCtx, QueryCtx, mutation, query } from "./_generated/server";
 import { getUser } from "./users";
 
 export const generateUploadUrl = mutation(async (ctx) => {
+    // CHECKS IF USER IS LOGGED IN
     const isLoggedIn = await ctx.auth.getUserIdentity();
 
     if (!isLoggedIn) {
@@ -73,4 +74,30 @@ export const getFiles = query({
             .withIndex('by_orgId', q => q.eq('orgId', args.orgId))
             .collect();
     },
+});
+
+export const deleteFile = mutation({
+    args: { fileId: v.id("files") },
+    async handler (ctx, args) {
+        // CHECKS IF USER IS LOGGED IN
+        const isLoggedIn = await ctx.auth.getUserIdentity();
+
+        if (!isLoggedIn) {
+            throw new ConvexError('You must be logged in to delete this file');
+        }
+
+        const file = await ctx.db.get(args.fileId);
+
+        if (!file) {
+            throw new ConvexError('File does not exist!');
+        }
+
+        const hasAccess = await hasAccessToOrg(ctx, isLoggedIn.tokenIdentifier, file.orgId);
+
+        if (!hasAccess) {
+            throw new ConvexError('You do not have access to delete this file!');
+        }
+
+        await ctx.db.delete(args.fileId);
+    }
 });
