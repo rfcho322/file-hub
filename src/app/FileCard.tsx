@@ -113,6 +113,7 @@ export function FileCard({ file }: { file: Doc<"files"> & { url: string | null }
             </CardContent>
             <CardFooter className="flex justify-center">
                 <Button 
+                    // OPENS A NEW TAB, PREVIEWS THE FILE, AND PROVIDES AN OPTION TO DOWNLOAD IT
                     onClick={() => {
                         if(!file.url) return;
                         window.open(file.url, "_blank");
