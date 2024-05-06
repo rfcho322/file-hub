@@ -77,16 +77,16 @@ export const getFiles = query({
             .withIndex('by_orgId', q => q.eq('orgId', args.orgId))
             .collect();
         
-        const filesWithUrl = await Promise.all(
+        return Promise.all(
             files.map(async (file) => ({
                 ...file,
                 url: await ctx.storage.getUrl(file.fileId),
             }))
         );
 
-        console.log(filesWithUrl);
+        // console.log(filesWithUrl);
 
-        return filesWithUrl;
+        // return filesWithUrl;
     },
 });
 

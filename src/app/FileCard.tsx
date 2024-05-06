@@ -29,6 +29,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
+import { getURL } from "next/dist/shared/lib/utils";
 
 
 function FileCardDropdownMenu({ file }: { file: Doc<"files"> }) {
@@ -83,7 +84,7 @@ function FileCardDropdownMenu({ file }: { file: Doc<"files"> }) {
 //     return `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
 // }
 
-export function FileCard({ file }: { file: Doc<"files"> & {url: string | null}}) {
+export function FileCard({ file }: { file: Doc<"files"> & { url: string | null }}) {
     const typesIcons = {
         image: <ImageIcon />,
         pdf: <FileText />,
@@ -101,14 +102,22 @@ export function FileCard({ file }: { file: Doc<"files"> & {url: string | null}})
                 </CardTitle>
                 {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
-            <CardContent>
-                    {
-                        file.type === "image" && file.url && (
-                            <Image alt={file.name} width="200" height="200" src={file.url} />
-                    )}
+            <CardContent className="h-[200px] flex justify-center items-center">
+                {
+                    file.type === "image" && file.url && (
+                        <Image alt={file.name} width="200" height="200" src={file.url} />
+                )}
+
+                {file.type === "csv" && <GanttChartSquare className="w-20 h-20"/>}
+                {file.type === "pdf" && <FileText className="w-20 h-20"/>}
             </CardContent>
-            <CardFooter>
-                <Button>Download</Button>
+            <CardFooter className="flex justify-center">
+                <Button 
+                    onClick={() => {
+                        if(!file.url) return;
+                        window.open(file.url, "_blank");
+                    }}
+                >Download</Button>
             </CardFooter>
         </Card>
     );
