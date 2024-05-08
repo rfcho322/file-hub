@@ -8,7 +8,7 @@ export default function FavoritesPage () {
 
     return (
         <div>
-            <FilesDisplay title="Your Favorites" favorites/>
+            <FilesDisplay title="Your Favorites" MyFavorites/>
         </div>
     );
 }

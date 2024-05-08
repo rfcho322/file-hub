@@ -14,14 +14,34 @@ export const generateUploadUrl = mutation(async (ctx) => {
     return await ctx.storage.generateUploadUrl();
 });
 
-async function hasAccessToOrg (ctx: QueryCtx | MutationCtx, tokenIdentifier: string, orgId: string) {
-    const user = await getUser(ctx, tokenIdentifier);
+async function hasAccessToOrg (ctx: QueryCtx | MutationCtx, orgId: string) {
+    //CHECKS IF USER IS LOGGED IN
+    const isLoggedIn = await ctx.auth.getUserIdentity();
+        console.log(isLoggedIn);
 
-        const hasAccess = 
+    if (!isLoggedIn) {
+        return null;
+    }
+
+    const user = await ctx.db.query("users")
+        .withIndex("by_tokenIdentifier", (q) => 
+        q.eq("tokenIdentifier", isLoggedIn.tokenIdentifier)
+    )
+    .first();
+
+    if (!user) {
+        return null;
+    }
+
+    const hasAccess = 
             user.orgIds.includes(orgId) ||
             user.tokenIdentifier.includes(orgId);
 
-    return hasAccess;
+    if (!hasAccess) {
+        return null;
+    }
+
+    return { user };
 }
 
 export const createFile = mutation({
@@ -32,15 +52,8 @@ export const createFile = mutation({
         type: fileTypes,
     },
     async handler(ctx, args) {
-        // CHECKS IF USER IS LOGGED IN
-        const isLoggedIn = await ctx.auth.getUserIdentity();
-        console.log(isLoggedIn);
 
-        if (!isLoggedIn) {
-            throw new ConvexError('You must be logged in to upload a file')
-        }
-
-        const hasAccess = await hasAccessToOrg(ctx, isLoggedIn.tokenIdentifier, args.orgId);
+        const hasAccess = await hasAccessToOrg(ctx, args.orgId);
 
         if (!hasAccess) {
             throw new ConvexError("You do not have access to this organization");
@@ -62,14 +75,8 @@ export const getFiles = query({
         favorites: v.optional(v.boolean()),
     },
     async handler(ctx, args) {
-        // CHECKS IF USER IS LOGGED IN
-        const isLoggedIn = await ctx.auth.getUserIdentity();
 
-        if (!isLoggedIn) {
-            return [];
-        }
-
-        const hasAccess = await hasAccessToOrg(ctx, isLoggedIn.tokenIdentifier, args.orgId);
+        const hasAccess = await hasAccessToOrg(ctx, args.orgId);
 
         if (!hasAccess) {
             return [];
@@ -90,21 +97,13 @@ export const getFiles = query({
         
 
         if (args.favorites) {
-            const user = await ctx.db.query("users")
-                .withIndex("by_tokenIdentifier", (q) => 
-                q.eq("tokenIdentifier", isLoggedIn.tokenIdentifier)
-            )
-            .first();
 
-            if (!user) {
-                files =  files;
-            } else {
-                const favorites = await ctx.db.query("favorites").withIndex("by_userId_orgId_fileId", q => 
-                    q.eq("userId", user._id).eq("orgId", args.orgId)
-                ).collect();
-    
-                files = files.filter(file => favorites.some((favorite) => favorite.fileId === file._id))
-            }
+            const favorites = await ctx.db.query("favorites").withIndex("by_userId_orgId_fileId", q => 
+                q.eq("userId", hasAccess.user._id).eq("orgId", args.orgId)
+            ).collect();
+
+            files = files.filter(file => favorites.some((favorite) => favorite.fileId === file._id))
+
             
         }
         
@@ -162,14 +161,27 @@ export const toggleFavorite = mutation({
     }
 });
 
+export const getAllFavorites = query({
+    args: { orgId: v.string() },
+    async handler (ctx, args) {
+
+        const hasAccess = await hasAccessToOrg(ctx, args.orgId);
+
+        if (!hasAccess) {
+            return [];
+        }
+
+        const favorite = await ctx.db.query("favorites")
+            .withIndex("by_userId_orgId_fileId", (q) => 
+            q.eq("userId", hasAccess.user._id).eq("orgId", args.orgId)
+        ).collect();
+
+        return favorite;
+    }
+});
+
 // CHECKS IF A USER HAS ACCESS
 async function hasAccessToFile (ctx: QueryCtx | MutationCtx, fileId: Id<"files">) {
-    // CHECKS IF USER IS LOGGED IN
-    const isLoggedIn = await ctx.auth.getUserIdentity();
-
-    if (!isLoggedIn) {
-        return null;
-    }
 
     const file = await ctx.db.get(fileId);
 
@@ -177,21 +189,11 @@ async function hasAccessToFile (ctx: QueryCtx | MutationCtx, fileId: Id<"files">
         return null;
     }
 
-    const hasAccess = await hasAccessToOrg(ctx, isLoggedIn.tokenIdentifier, file.orgId);
+    const hasAccess = await hasAccessToOrg(ctx, file.orgId);
 
     if (!hasAccess) {
         return null;
     }
 
-    const user = await ctx.db.query("users")
-        .withIndex("by_tokenIdentifier", (q) => 
-        q.eq("tokenIdentifier", isLoggedIn.tokenIdentifier)
-    )
-    .first();
-
-    if (!user) {
-        return null;
-    }
-
-    return { user, file };
+    return { user: hasAccess.user, file };
 }
