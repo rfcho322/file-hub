@@ -5,12 +5,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Doc, Id } from "../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -23,10 +24,10 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { FileText, GanttChartSquare, ImageIcon, MoreVertical, TrashIcon } from "lucide-react";
+import { FileText, GanttChartSquare, ImageIcon, MoreVertical, StarIcon, TrashIcon } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { useMutation } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import { getURL } from "next/dist/shared/lib/utils";
@@ -34,6 +35,7 @@ import { getURL } from "next/dist/shared/lib/utils";
 
 function FileCardDropdownMenu({ file }: { file: Doc<"files"> }) {
     const deleteFile = useMutation(api.files.deleteFile);
+    const toggleFavorite = useMutation(api.files.toggleFavorite);
     const { toast } = useToast();
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -69,10 +71,22 @@ function FileCardDropdownMenu({ file }: { file: Doc<"files"> }) {
                 <DropdownMenuTrigger><MoreVertical /></DropdownMenuTrigger>
                 <DropdownMenuContent>
                     <DropdownMenuItem
+                        onClick={() => {
+                            toggleFavorite({
+                                fileId: file._id,
+                            });
+                        }}
+                        className="items-center cursor-pointer"
+                    >
+                        <StarIcon className="mr-2 h-4 w-4" /> Favorite
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
                         onClick={() => setIsConfirmOpen(true)}
                         className="text-red-600 items-center cursor-pointer"
                     >
-                        <TrashIcon className="mr-2 h-4 w-4" /> Delete</DropdownMenuItem>
+                        <TrashIcon className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
         </>

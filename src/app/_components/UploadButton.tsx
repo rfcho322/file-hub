@@ -1,7 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button";
 import { useOrganization, useUser } from "@clerk/nextjs";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import {
     Form,
     FormControl,
@@ -20,13 +20,13 @@ import { useForm } from "react-hook-form"
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import { Doc } from "../../convex/_generated/dataModel";
+import { Doc } from "../../../convex/_generated/dataModel";
 
 const formSchema = z.object({
     title: z.string().min(2).max(200),
     file: z.custom<FileList>((val) => val instanceof FileList, "Required")
         .refine((files) => files.length > 0, `Required`),
-})
+});
 
 export function UploadButton() {
     const { toast } = useToast();
