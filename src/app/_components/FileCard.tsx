@@ -31,6 +31,7 @@ import { api } from "../../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
 import { getURL } from "next/dist/shared/lib/utils";
+import { Protect } from "@clerk/nextjs";
 
 
 function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">, isFavorited: boolean }) {
@@ -89,13 +90,18 @@ function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">, isFav
                             </div>
                         }
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        onClick={() => setIsConfirmOpen(true)}
-                        className="text-red-600 items-center cursor-pointer"
-                    >
-                        <TrashIcon className="mr-2 h-4 w-4" /> Delete
-                    </DropdownMenuItem>
+                    {/* <Protect
+                        role="org:admin"
+                        fallback={<></>}
+                    > */}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            onClick={() => setIsConfirmOpen(true)}
+                            className="text-red-600 items-center cursor-pointer"
+                        >
+                            <TrashIcon className="mr-2 h-4 w-4" /> Delete
+                        </DropdownMenuItem>
+                    {/* </Protect> */}
                 </DropdownMenuContent>
             </DropdownMenu>
         </>
