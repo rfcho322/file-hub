@@ -5,11 +5,9 @@ import { useQuery } from "convex/react";
 import { UploadButton } from "./UploadButton";
 import { FileCard } from "./FileCard";
 import Image from "next/image";
-import { FileIcon, Loader2, StarIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { SearchBar } from "./SearchBar";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 function Placeholder() {
   return (
@@ -31,9 +29,11 @@ function Placeholder() {
 export function FilesDisplay({
   title, 
   MyFavorites,
+  deletedFiles,
 } : { 
   title: string; 
   MyFavorites?: boolean;
+  deletedFiles?: boolean;
 }) {
   const organization = useOrganization();
   const user = useUser();
@@ -49,7 +49,7 @@ export function FilesDisplay({
   );
 
   const files = useQuery(
-    api.files.getFiles, orgId ? { orgId, query, favorites: MyFavorites } : "skip");
+    api.files.getFiles, orgId ? { orgId, query, favorites: MyFavorites, deletedFiles } : "skip");
   const isLoading = files === undefined;
 
   return (

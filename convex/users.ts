@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { MutationCtx, QueryCtx, internalMutation } from "./_generated/server";
+import { MutationCtx, QueryCtx, internalMutation, query } from "./_generated/server";
 import { roles } from "./schema";
 
 export async function getUser(ctx: QueryCtx | MutationCtx, tokenIdentifier: string) {
@@ -17,12 +17,34 @@ export async function getUser(ctx: QueryCtx | MutationCtx, tokenIdentifier: stri
     return user;
 }
 
+//CREATE USER
 export const createUser = internalMutation({
-  args: { tokenIdentifier: v.string() },
+  args: { tokenIdentifier: v.string(), name: v.string(), image: v.string() },
   async handler(ctx, args) {
     await ctx.db.insert("users", {
       tokenIdentifier: args.tokenIdentifier,
       orgIds: [],
+      name: args.name,
+      image: args.image,
+    });
+  },
+});
+
+//UPDATE USER
+export const updateUser = internalMutation({
+  args: { tokenIdentifier: v.string(), name: v.string(), image: v.string() },
+  async handler(ctx, args) {
+    const user = await ctx.db.query("users").withIndex("by_tokenIdentifier", (q) =>
+      q.eq("tokenIdentifier", args.tokenIdentifier)
+    ).first();
+
+    if (!user) {
+      throw new ConvexError("Unable to find a user with this token");
+    }
+
+    await ctx.db.patch(user._id, {
+      name: args.name,
+      image: args.image,
     });
   },
 });
@@ -41,7 +63,7 @@ export const addOrgIdToUser = internalMutation({
   },
 });
 
-//
+//ABILITY TO CHANGE USER ROLES
 export const updateRoleInOrgForUser = internalMutation({
   args: { tokenIdentifier: v.string(), orgId: v.string(), role: roles },
   async handler(ctx, args) {
@@ -55,9 +77,21 @@ export const updateRoleInOrgForUser = internalMutation({
     }
 
     org.role = args.role;
-    //IF THERE IS. THEN ADD ORG TO USER
+
     await ctx.db.patch(user._id, {
       orgIds: user.orgIds,
     });
+  },
+});
+
+export const getUserProfile = query({
+  args: { userId: v.id("users")},
+  async handler(ctx, args) {
+    const user = await ctx.db.get(args.userId);
+
+    return {
+      name: user?.name,
+      image: user?.image,
+    };
   },
 });

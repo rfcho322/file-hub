@@ -5,15 +5,16 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Doc, Id } from "../../../convex/_generated/dataModel";
-import { Button } from "@/components/ui/button";
+import { Doc } from "../../../convex/_generated/dataModel";
+import { formatRelative, subDays } from 'date-fns';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -23,19 +24,19 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { FileText, GanttChartSquare, ImageIcon, MoreVertical, StarIcon, StarOff, TrashIcon } from "lucide-react";
+} from "@/components/ui/alert-dialog";
+import { DownloadIcon, FileText, GanttChartSquare, HistoryIcon, ImageIcon, MoreVertical, StarIcon, TrashIcon } from "lucide-react";
 import { ReactNode, useState } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { useToast } from "@/components/ui/use-toast";
 import Image from "next/image";
-import { getURL } from "next/dist/shared/lib/utils";
 import { Protect } from "@clerk/nextjs";
 
 
-function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">, isFavorited: boolean }) {
+function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files"> & { url: string | null }, isFavorited: boolean }) {
     const deleteFile = useMutation(api.files.deleteFile);
+    const restoreFile = useMutation(api.files.restoreFile);
     const toggleFavorite = useMutation(api.files.toggleFavorite);
     const { toast } = useToast();
 
@@ -47,8 +48,7 @@ function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">, isFav
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your account
-                            and remove your data from our servers.
+                            File moved to trash can be permanently deleted. Please ensure that you no longer need this file before proceeding.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -60,8 +60,8 @@ function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">, isFav
                                 });
                                 toast({
                                     variant: "default",
-                                    title: "File Deleted",
-                                    description: "Your file is successfully deleted.",
+                                    title: "File moved to trash",
+                                    description: "Your file has been successfully moved to the trash folder",
                                 })
                             }}>Continue</AlertDialogAction>
                     </AlertDialogFooter>
@@ -71,6 +71,15 @@ function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">, isFav
             <DropdownMenu>
                 <DropdownMenuTrigger><MoreVertical /></DropdownMenuTrigger>
                 <DropdownMenuContent>
+                    <DropdownMenuItem
+                        onClick={() => {
+                            if(!file.url) return;
+                            window.open(file.url, "_blank");
+                        }}
+                        className="items-center cursor-pointer"
+                    >   
+                        <DownloadIcon className="mr-2 h-4 w-4" /> Download
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={() => {
                             toggleFavorite({
@@ -90,30 +99,44 @@ function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">, isFav
                             </div>
                         }
                     </DropdownMenuItem>
-                    {/* <Protect
+                    <Protect
                         role="org:admin"
                         fallback={<></>}
-                    > */}
+                    >
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                            onClick={() => setIsConfirmOpen(true)}
-                            className="text-red-600 items-center cursor-pointer"
+                            onClick={() => {
+                                if (file.toBeDeleted) {
+                                    restoreFile({
+                                        fileId: file._id,
+                                    });
+                                } else {
+                                    setIsConfirmOpen(true)
+                                }
+                            }}
+                            className="cursor-pointer"
                         >
-                            <TrashIcon className="mr-2 h-4 w-4" /> Delete
+                            {file.toBeDeleted ?
+                                <div className="flex items-center">
+                                    <HistoryIcon className="mr-2 h-4 w-4" /> Restore
+                                </div> 
+                            :
+                                <div className="flex items-center text-red-600">
+                                    <TrashIcon className="mr-2 h-4 w-4" /> Delete
+                                </div> 
+                            }
                         </DropdownMenuItem>
-                    {/* </Protect> */}
+                    </Protect>
                 </DropdownMenuContent>
             </DropdownMenu>
         </>
     );
 }
 
-// function getFileUrl(fileId: Id<"_storage">): string {
-//     // console.log(fileId);
-//     return `${process.env.NEXT_PUBLIC_CONVEX_URL}/api/storage/${fileId}`;
-// }
-
 export function FileCard({ file, favorites }: { file: Doc<"files"> & { url: string | null }, favorites: Doc<"favorites">[]}) {
+    const userProfile = useQuery(api.users.getUserProfile, {
+        userId: file.userId,
+    });
     const typesIcons = {
         image: <ImageIcon />,
         pdf: <FileText />,
@@ -124,7 +147,7 @@ export function FileCard({ file, favorites }: { file: Doc<"files"> & { url: stri
     return (
         <Card>
             <CardHeader className="relative">
-                <CardTitle className="flex gap-2">
+                <CardTitle className="flex gap-2 text-base">
                     <div className="flex justify-center">{typesIcons[file.type]}</div>
                     {file.name}
                     <div className="absolute top-3 right-3">
@@ -142,14 +165,17 @@ export function FileCard({ file, favorites }: { file: Doc<"files"> & { url: stri
                 {file.type === "csv" && <GanttChartSquare className="w-20 h-20"/>}
                 {file.type === "pdf" && <FileText className="w-20 h-20"/>}
             </CardContent>
-            <CardFooter className="flex justify-center">
-                <Button 
-                    // OPENS A NEW TAB, PREVIEWS THE FILE, AND PROVIDES AN OPTION TO DOWNLOAD IT
-                    onClick={() => {
-                        if(!file.url) return;
-                        window.open(file.url, "_blank");
-                    }}
-                >Download</Button>
+            <CardFooter className="flex justify-between">
+                <div className="flex items-center gap-2 text-xs text-gray-600 w-40">
+                    <Avatar className="w-6 h-6">
+                        <AvatarImage src={userProfile?.image} />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    {userProfile?.name}
+                </div>
+                <div className="text-xs text-gray-600">
+                    Uploaded on {formatRelative(new Date(file._creationTime), new Date())}
+                </div>
             </CardFooter>
         </Card>
     );
