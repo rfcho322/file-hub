@@ -39,6 +39,7 @@ export function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">
     const restoreFile = useMutation(api.files.restoreFile);
     const toggleFavorite = useMutation(api.files.toggleFavorite);
     const { toast } = useToast();
+    const authUser = useQuery(api.users.getAuthUser);
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     return (
@@ -100,7 +101,11 @@ export function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">
                         }
                     </DropdownMenuItem>
                     <Protect
-                        role="org:admin"
+                        condition={(checkRole) => {
+                            return checkRole({
+                                role: "org:admin",
+                            }) || file.userId === authUser?._id;
+                        }}
                         fallback={<></>}
                     >
                         <DropdownMenuSeparator />

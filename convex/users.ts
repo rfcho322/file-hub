@@ -95,3 +95,23 @@ export const getUserProfile = query({
     };
   },
 });
+
+// GETTING CURRENTLY AUTHENTICATED USER
+export const getAuthUser = query({
+  args: {},
+  async handler(ctx, args) {
+    const isLoggedIn = await ctx.auth.getUserIdentity();
+
+    if (!isLoggedIn) {
+        return null;
+    }
+
+    const user = await getUser(ctx, isLoggedIn.tokenIdentifier);
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+});

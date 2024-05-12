@@ -5,7 +5,7 @@ const crons = cronJobs();
 
 crons.interval(
   "permanently delete files from trash table",
-  { minutes: 1 }, // every minute
+  { minutes: 59 }, // every minute
   internal.files.deleteAllFiles,
 );
 

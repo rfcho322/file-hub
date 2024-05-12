@@ -11,6 +11,16 @@ import { useState } from "react";
 import { DataTable } from "./FileTable";
 import { columns } from "./columns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Doc } from "../../../convex/_generated/dataModel";
+import { Label } from "@/components/ui/label";
+
 
 function Placeholder() {
   return (
@@ -41,6 +51,7 @@ export function FilesDisplay({
   const organization = useOrganization();
   const user = useUser();
   const [query, setQuery] = useState("");
+  const [type, setType] = useState<Doc<"files">["type"] | "all">("all");
 
   let orgId: string | undefined = undefined;
   if (organization.isLoaded && user.isLoaded) {
@@ -52,7 +63,7 @@ export function FilesDisplay({
   );
 
   const files = useQuery(
-    api.files.getFiles, orgId ? { orgId, query, favorites: MyFavorites, deletedFiles } : "skip");
+    api.files.getFiles, orgId ? { orgId, type: type === "all" ? undefined : type, query, favorites: MyFavorites, deletedFiles } : "skip");
   const isLoading = files === undefined;
 
   const filesWithFavoritesData = files?.map(file => ({
@@ -70,16 +81,35 @@ export function FilesDisplay({
         <UploadButton />
       </div>
       <Tabs defaultValue="grid">
-        <TabsList className="mb-4">
-          <TabsTrigger value="grid" className="flex gap-2 items-center">
-            <LayoutGridIcon />
-            Grid
-          </TabsTrigger>
-          <TabsTrigger value="list" className="flex gap-2 items-center">
-            <AlignJustifyIcon />
-            List
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex justify-between">
+          <TabsList className="mb-4">
+            <TabsTrigger value="grid" className="flex gap-2 items-center">
+              <LayoutGridIcon />
+              Grid
+            </TabsTrigger>
+            <TabsTrigger value="list" className="flex gap-2 items-center">
+              <AlignJustifyIcon />
+              List
+            </TabsTrigger>
+          </TabsList>
+          <div className="flex gap-2 items-center">
+            <Label htmlFor="typeSelect">Type Filter</Label>
+            <Select value={type} onValueChange={(newType) => {
+                setType(newType as any);
+              }}
+            >
+              <SelectTrigger id="typeSelect" className="w-[180px]">
+                <SelectValue/>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="image">Image</SelectItem>
+                <SelectItem value="csv">CSV</SelectItem>
+                <SelectItem value="pdf">PDF</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
         {/* LOADER */}
         {isLoading && (
           <div className="flex flex-col gap-8 w-full items-center mt-24">
