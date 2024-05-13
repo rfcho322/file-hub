@@ -112,19 +112,13 @@ export function UploadButton() {
         >
             <DialogTrigger asChild>
                 <Button
-                    onClick={() => {
-                        // console.log(orgId);
-                        // if(!orgId) return;
-                        // createFile({
-                        //   name: "Hello World",
-                        //   orgId
-                        // });
-                    }}
+                    size="sm"
+                    className="bg-indigo-700 hover:bg-indigo-800"
                 >
                     File Upload
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="text-gray-100 bg-neutral-800 border-none">
                 <DialogHeader>
                     <DialogTitle className="mb-8">Upload your file</DialogTitle>
                     <DialogDescription>
@@ -141,7 +135,9 @@ export function UploadButton() {
                                     <FormItem>
                                         <FormLabel>Title</FormLabel>
                                         <FormControl>
-                                            <Input {...field} />
+                                            <Input {...field} 
+                                                className="bg-neutral-800 text-gray-400 border-neutral-700 focus:ring-offset-gray-200"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -155,7 +151,9 @@ export function UploadButton() {
                                         <FormLabel>File</FormLabel>
                                         <FormControl>
                                             <Input
+                                                id="changeChoosefileColor"
                                                 type="file" {...fileRef}
+                                                className="text-gray-600 border-neutral-700 focus:ring-offset-gray-200"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -164,7 +162,7 @@ export function UploadButton() {
                             />
                             <Button type="submit"
                                 disabled={form.formState.isSubmitting}
-                                className="flex gap-1"
+                                className="flex gap-1 bg-indigo-700 hover:bg-indigo-800"
                             >
                                 {form.formState.isSubmitting && (
                                     <Loader2 className="h-4 w-4 animate-spin" />

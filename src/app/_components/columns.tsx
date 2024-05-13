@@ -13,7 +13,7 @@ function UserColumn ({ userId } : { userId: Id<"users">}) {
         userId: userId,
     });
     return (
-        <div className="flex items-center gap-2 text-xs text-gray-600 w-40">
+        <div className="flex items-center gap-2 text-xs text-gray-400 w-40">
             <Avatar className="w-6 h-6">
                 <AvatarImage src={userProfile?.image} />
                 <AvatarFallback>CN</AvatarFallback>

@@ -45,16 +45,17 @@ export function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">
     return (
         <>
             <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent className="text-gray-100 bg-neutral-800 border-none">
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <AlertDialogDescription className="text-gray-400">
                             File moved to trash can be permanently deleted. Please ensure that you no longer need this file before proceeding.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel className="bg-neutral-600 border-none hover:bg-neutral-700 hover:text-gray-200">Cancel</AlertDialogCancel>
                         <AlertDialogAction
+                            className="bg-indigo-700 hover:bg-indigo-800 text-gray-200"
                             onClick={async () => {
                                 await deleteFile({
                                     fileId: file._id,
@@ -70,16 +71,20 @@ export function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">
             </AlertDialog>
 
             <DropdownMenu>
-                <DropdownMenuTrigger><MoreVertical /></DropdownMenuTrigger>
-                <DropdownMenuContent>
+                <DropdownMenuTrigger className="text-gray-100">
+                    <MoreVertical />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-neutral-800 border-stone-600">
                     <DropdownMenuItem
                         onClick={() => {
                             if(!file.url) return;
                             window.open(file.url, "_blank");
                         }}
-                        className="items-center cursor-pointer"
+                        className="items-center cursor-pointer hover:!bg-neutral-700"
                     >   
-                        <DownloadIcon className="mr-2 h-4 w-4" /> Download
+                        <div className="flex items-center text-gray-100">
+                            <DownloadIcon className="mr-2 h-4 w-4" /> Download
+                        </div>
                     </DropdownMenuItem>
                     <DropdownMenuItem
                         onClick={() => {
@@ -87,15 +92,15 @@ export function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">
                                 fileId: file._id,
                             });
                         }}
-                        className="items-center cursor-pointer"
+                        className="items-center cursor-pointer hover:!bg-neutral-700"
                     >   
                         { isFavorited ? (
-                            <div className="flex items-center">
+                            <div className="flex items-center text-gray-100">
                                 <StarIcon className="mr-2 h-4 w-4 fill-yellow-400 text-yellow-400" />
                                 Remove as Favorite
                             </div>
                         ) :
-                            <div className="flex items-center">
+                            <div className="flex items-center text-gray-100">
                                 <StarIcon className="mr-2 h-4 w-4" /> Add to Favorites
                             </div>
                         }
@@ -108,7 +113,7 @@ export function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">
                         }}
                         fallback={<></>}
                     >
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator className="bg-stone-600"/>
                         <DropdownMenuItem
                             onClick={() => {
                                 if (file.toBeDeleted) {
@@ -119,14 +124,14 @@ export function FileCardDropdownMenu({ file, isFavorited }: { file: Doc<"files">
                                     setIsConfirmOpen(true)
                                 }
                             }}
-                            className="cursor-pointer"
+                            className="cursor-pointer hover:!bg-neutral-700"
                         >
                             {file.toBeDeleted ?
-                                <div className="flex items-center">
+                                <div className="flex items-center text-gray-100">
                                     <HistoryIcon className="mr-2 h-4 w-4" /> Restore
                                 </div> 
                             :
-                                <div className="flex items-center text-red-600">
+                                <div className="flex items-center font-bold text-red-600">
                                     <TrashIcon className="mr-2 h-4 w-4" /> Delete
                                 </div> 
                             }

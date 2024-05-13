@@ -13,35 +13,41 @@ export function SideNav () {
       <div className="w-40 flex flex-col gap-0">
         <Link href="/dashboard/files" 
           className={clsx("rounded-md", {
-            "hover:bg-gray-200" : !pathname.includes("/dashboard/files"),
-            "bg-blue-200" : pathname.includes("/dashboard/files"),
+            "hover:bg-neutral-800" : !pathname.includes("/dashboard/files"),
+            "bg-neutral-800" : pathname.includes("/dashboard/files"),
           })}>
           <Button 
             variant={"link"} 
-            className="flex gap-2 !no-underline">
+            className={clsx("flex gap-2 !no-underline text-gray-400",{
+              "text-gray-200" : pathname.includes("/dashboard/files"),
+            })}>
             <FileIcon /> Files
           </Button>
         </Link>
         <Link href="/dashboard/favorites" 
           className={clsx("rounded-md", {
-            "hover:bg-gray-200" : !pathname.includes("/dashboard/favorites"),
-            "bg-blue-200" : pathname.includes("/dashboard/favorites"),
+            "hover:bg-neutral-800" : !pathname.includes("/dashboard/favorites"),
+            "bg-neutral-800" : pathname.includes("/dashboard/favorites"),
           })}>
           <Button 
             variant={"link"} 
-            className="flex gap-2 !no-underline">
+            className={clsx("flex gap-2 !no-underline text-gray-400",{
+              "text-gray-200" : pathname.includes("/dashboard/favorites"),
+            })}>
             <StarIcon /> Favorites
           </Button>
         </Link>
 
         <Link href="/dashboard/trash" 
           className={clsx("rounded-md", {
-            "hover:bg-gray-200" : !pathname.includes("/dashboard/trash"),
-            "bg-blue-200" : pathname.includes("/dashboard/trash"),
+            "hover:bg-neutral-800" : !pathname.includes("/dashboard/trash"),
+            "bg-neutral-800" : pathname.includes("/dashboard/trash"),
           })}>
           <Button 
             variant={"link"} 
-            className="flex gap-2 !no-underline">
+            className={clsx("flex gap-2 !no-underline text-gray-400",{
+              "text-gray-200" : pathname.includes("/dashboard/trash"),
+            })}>
             <TrashIcon /> Trash
           </Button>
         </Link>

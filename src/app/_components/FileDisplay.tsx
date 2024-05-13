@@ -24,15 +24,15 @@ import { Label } from "@/components/ui/label";
 
 function Placeholder() {
   return (
-    <div className="flex flex-col gap-8 w-full items-center">
+    <div className="flex flex-col gap-8 items-center">
       <Image
         alt="an image of add a new file"
         width="350"
         height="350"
         src="/empty_files.svg"
       />
-      <div className="text-2xl">
-        Nothing to see here, try and upload a file now
+      <div className="text-2xl text-gray-100">
+        Nothing to see here, try and upload a file nows
       </div>
       <UploadButton />
     </div>
@@ -75,46 +75,47 @@ export function FilesDisplay({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">{title}</h1>
-        <SearchBar query={query} setQuery={setQuery} />
-        <UploadButton />
+      <div className="flex flex-col lg:flex-row justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold text-gray-100">{title}</h1>
+        <SearchBar query={query} setQuery={setQuery}/>
+        <UploadButton/>
       </div>
       <Tabs defaultValue="grid">
         <div className="flex justify-between">
-          <TabsList className="mb-4">
-            <TabsTrigger value="grid" className="flex gap-2 items-center">
-              <LayoutGridIcon />
-              Grid
-            </TabsTrigger>
-            <TabsTrigger value="list" className="flex gap-2 items-center">
-              <AlignJustifyIcon />
-              List
-            </TabsTrigger>
-          </TabsList>
           <div className="flex gap-2 items-center">
-            <Label htmlFor="typeSelect">Type Filter</Label>
+            <Label htmlFor="typeSelect" className="text-gray-400">Type Filter</Label>
             <Select value={type} onValueChange={(newType) => {
                 setType(newType as any);
               }}
             >
-              <SelectTrigger id="typeSelect" className="w-[180px]">
+              <SelectTrigger id="typeSelect" 
+                className="w-[180px] bg-neutral-800 text-gray-400 border-neutral-700 focus:ring-offset-gray-200">
                 <SelectValue/>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="image">Image</SelectItem>
-                <SelectItem value="csv">CSV</SelectItem>
-                <SelectItem value="pdf">PDF</SelectItem>
+              <SelectContent className="bg-neutral-800 border-stone-600 text-gray-100">
+                <SelectItem className="hover:!bg-neutral-700 hover:!text-gray-100" value="all">All</SelectItem>
+                <SelectItem className="hover:!bg-neutral-700 hover:!text-gray-100" value="image">Image</SelectItem>
+                <SelectItem className="hover:!bg-neutral-700 hover:!text-gray-100" value="csv">CSV</SelectItem>
+                <SelectItem className="hover:!bg-neutral-700 hover:!text-gray-100" value="pdf">PDF</SelectItem>
               </SelectContent>
             </Select>
           </div>
+          <TabsList className="mb-4 bg-neutral-800">
+            <TabsTrigger value="grid" className="flex gap-2 items-center text-gray-400">
+              <LayoutGridIcon />
+              Grid
+            </TabsTrigger>
+            <TabsTrigger value="list" className="flex gap-2 items-center text-gray-400">
+              <AlignJustifyIcon />
+              List
+            </TabsTrigger>
+          </TabsList>
         </div>
         {/* LOADER */}
         {isLoading && (
           <div className="flex flex-col gap-8 w-full items-center mt-24">
-            <Loader2 className="h-32 w-32 animate-spin text-gray-500" />
-            <div className="text-2xl">Loading your files...</div>
+            <Loader2 className="h-32 w-32 animate-spin text-gray-400" />
+            <div className="text-2xl text-gray-100">Loading your files...</div>
           </div>
         )}
         {/* GRID VIEW */}
