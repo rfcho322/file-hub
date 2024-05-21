@@ -35,7 +35,7 @@ export function SearchBar({query, setQuery} : {query: string, setQuery: Dispatch
                         <FormItem>
                             {/* <FormLabel>Title</FormLabel> */}
                             <FormControl>
-                                <Input placeholder="Search here..." {...field} className="w-96 bg-neutral-800 text-gray-400 border-neutral-700 focus:ring-offset-gray-200"/>
+                                <Input placeholder="Search here..." {...field} className="w-40 sm:w-96 bg-neutral-800 text-gray-400 border-neutral-700 focus:ring-offset-gray-200"/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>

@@ -30,9 +30,9 @@ export default function LandingPage() {
                     </div>
                 </div>
                 <div className="text-center">
-                    <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                    Elevate Your Data Storage Experience
-                    </h1>
+                    <div className="text-4xl font-bold tracking-tight text-white sm:text-6xl bg-gradient-to-r from-blue-400 to-blue-900 text-transparent bg-clip-text">
+                        Elevate Your Data Storage Experience
+                    </div>
                     <p className="mt-6 text-lg leading-8 text-gray-300">
                     Your One-Stop Solution for Secure File Management and Collaboration. Upload, Share, and Manage Files Effortlessly.
                     </p>
@@ -70,35 +70,35 @@ export default function LandingPage() {
                     <Image
                         className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
                         src="/company-logo1.svg"
-                        alt="Transistor"
+                        alt="company logo 1"
                         width={158}
                         height={48}
                     />
                     <Image
                         className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
                         src="/company-logo2.svg"
-                        alt="Reform"
+                        alt="company logo 2"
                         width={158}
                         height={48}
                     />
                     <Image
                         className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
                         src="/company-logo3.svg"
-                        alt="Tuple"
+                        alt="company logo 3"
                         width={158}
                         height={48}
                     />
                     <Image
                         className="col-span-2 max-h-12 w-full object-contain sm:col-start-2 lg:col-span-1"
                         src="/company-logo4.svg"
-                        alt="SavvyCal"
+                        alt="company logo 4"
                         width={158}
                         height={48}
                     />
                     <Image
                         className="col-span-2 col-start-2 max-h-12 w-full object-contain sm:col-start-auto lg:col-span-1"
                         src="/company-logo5.svg"
-                        alt="Statamic"
+                        alt="company logo 5"
                         width={158}
                         height={48}
                     />
@@ -147,7 +147,7 @@ export default function LandingPage() {
                     <div className="relative mt-8 h-80 lg:mt-8">
                         <Image
                         className="absolute left-0 top-0 w-[57rem] max-w-none rounded-md bg-white/5 ring-1 ring-white/10"
-                        src="/cta-image.png"
+                        src="/cta-image.jpg"
                         alt="App screenshot"
                         width={1824}
                         height={1080}

@@ -31,7 +31,7 @@ function Placeholder() {
         height="350"
         src="/empty_files.svg"
       />
-      <div className="text-2xl text-gray-100">
+      <div className="text-2xl text-center text-gray-100">
         Nothing to see here, try and upload a file nows
       </div>
       <UploadButton />
@@ -75,7 +75,7 @@ export function FilesDisplay({
 
   return (
     <div>
-      <div className="flex flex-col lg:flex-row justify-between items-center mb-8">
+      <div className="flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center mb-8">
         <h1 className="text-4xl font-bold text-gray-100">{title}</h1>
         <SearchBar query={query} setQuery={setQuery}/>
         <UploadButton/>
@@ -100,7 +100,7 @@ export function FilesDisplay({
               </SelectContent>
             </Select>
           </div>
-          <TabsList className="mb-4 bg-neutral-800">
+          <TabsList className="bg-neutral-800">
             <TabsTrigger value="grid" className="flex gap-2 items-center text-gray-400">
               <LayoutGridIcon />
               Grid
@@ -120,7 +120,7 @@ export function FilesDisplay({
         )}
         {/* GRID VIEW */}
         <TabsContent value="grid">
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filesWithFavoritesData?.map(file => {
               return <FileCard key={file._id} file={file} />
             })}

@@ -4,10 +4,10 @@ import Link from "next/link";
 export function Footer () {
     return (      
         <footer className="w-full px-8 bg-zinc-800">
-            <div className="md:py-8">
+            <div className="py-8">
                 <div className="sm:flex sm:items-center sm:justify-between">
                     <Link href="/" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
-                        <Image src="/file_hub_logo.png" width={32} height={32} alt="FileHub Logo" />
+                        <Image src="/filehub_logo_no_bg.png" width={32} height={32} alt="FileHub Logo" />
                         <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">FileHub</span>
                     </Link>
                     <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-300 sm:mb-0">
