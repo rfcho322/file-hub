@@ -32,7 +32,7 @@ function Placeholder() {
         src="/empty_files.svg"
       />
       <div className="text-2xl text-center text-gray-100">
-        Nothing to see here, try and upload a file nows
+        Nothing to see here, try and upload a file now
       </div>
       <UploadButton />
     </div>
