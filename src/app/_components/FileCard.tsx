@@ -30,7 +30,7 @@ export function FileCard({ file }: { file: Doc<"files"> & { isFavorited: boolean
     } as Record<Doc<"files">["type"], ReactNode>;
     
     return (
-        <Card className="bg-neutral-800 border-stone-700">
+        <Card className="flex flex-col bg-neutral-800 border-stone-700">
             <CardHeader className="relative text-gray-100">
                 <CardTitle className="flex gap-2 text-base">
                     <div className="flex justify-center">{typesIcons[file.type]}</div>
@@ -41,14 +41,19 @@ export function FileCard({ file }: { file: Doc<"files"> & { isFavorited: boolean
                 </CardTitle>
                 {/* <CardDescription>Card Description</CardDescription> */}
             </CardHeader>
-            <CardContent className="h-[200px] flex justify-center items-center">
+            <CardContent className="flex-1 flex justify-center items-center">
                 {
                     file.type === "image" && file.url && (
-                        <Image alt={file.name} width="200" height="200" src={file.url} />
+                    <div className="relative w-[250px] h-[250px]">
+                        <Image 
+                        src={file.url} alt={file.name} fill priority
+                        sizes="(max-width: 300px) 100vw, 33vw"
+                        className="rounded-md object-contain"/>
+                    </div>
                 )}
-                {file.type === "csv" && <Image src="/csv-logo.png" alt="csv logo" width={80} height={80}></Image>}
+                {file.type === "csv" && <Image src="/csv-logo.png" alt="csv logo" priority width={80} height={80}/>}
                 {/* {file.type === "pdf" && <FileText className="w-20 h-20"/>} */}
-                {file.type === "pdf" && <Image src="/pdf-logo.png" alt="pdf logo" width={80} height={80}></Image>}
+                {file.type === "pdf" && <Image src="/pdf-logo.png" alt="pdf logo" priority width={80} height={80}/>}
             </CardContent>
             <CardFooter className="flex justify-between mt-6">
                 <div className="flex items-center gap-2 text-xs text-gray-400 w-40">

@@ -81,14 +81,14 @@ export function UploadButton() {
             setIsFileDialogOpen(false);
 
             toast({
-                variant: "success",
+                variant: "default",
                 title: "File Upload Success",
                 description: "Your file is ready to be access.",
             })
         } catch (err) {
             toast({
                 variant: "destructive",
-                title: "File Upload Success",
+                title: "File cannot be uploaded",
                 description: "Your file cannot be uploaded, try again later",
             })
         }
@@ -136,6 +136,7 @@ export function UploadButton() {
                                         <FormLabel>Title</FormLabel>
                                         <FormControl>
                                             <Input {...field} 
+                                                placeholder="Some title"
                                                 className="bg-neutral-800 text-gray-400 border-neutral-700 focus:ring-offset-gray-200"
                                             />
                                         </FormControl>
@@ -153,7 +154,7 @@ export function UploadButton() {
                                             <Input
                                                 id="changeChoosefileColor"
                                                 type="file" {...fileRef}
-                                                className="text-gray-600 border-neutral-700 focus:ring-offset-gray-200"
+                                                className="text-gray-600 border-neutral-700 bg-neutral-800 focus:ring-offset-gray-200"
                                             />
                                         </FormControl>
                                         <FormMessage />
